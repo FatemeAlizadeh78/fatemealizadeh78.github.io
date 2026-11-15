@@ -36,7 +36,7 @@ jobs:
         run: |
           mkdir _site
           cp index.html styles.css site.js robots.txt sitemap.xml .nojekyll _site/
-          cp -R assets research _site/
+          cp -R assets research proposals _site/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

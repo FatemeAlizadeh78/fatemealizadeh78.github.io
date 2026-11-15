@@ -17,13 +17,13 @@ class Page(HTMLParser):
         if tag=='title':self.title=True
         for key in ('href','src'):
             if key in a:self.links.append(a[key])
-        if tag=='img':assert a.get('alt'), 'Image needs alt text'
+        if tag=='img':assert 'alt' in a, 'Image needs alt text; use empty alt for decorative images'
 
 def check():
     pages={}
-    for path in [ROOT/'index.html',*sorted((ROOT/'research').glob('*.html'))]:
+    for path in [ROOT/'index.html',*sorted((ROOT/'research').glob('*.html')),*sorted((ROOT/'proposals').rglob('*.html'))]:
         parser=Page();parser.feed(path.read_text());assert parser.title,path;pages[path.resolve()]=parser
-    assert len(pages)==4,'Expected landing page and three case studies'
+    assert len(pages)==8,'Expected original site, case studies, comparison page and three proposals'
     for path,parser in pages.items():
         for link in parser.links:
             u=urlsplit(link)
@@ -37,6 +37,6 @@ def check():
     alltext='\n'.join(p.read_text() for p in pages)
     assert 'sources/cv/' not in alltext and 'sources/project-review/' not in alltext
     assert '+49 176' not in alltext
-    print('PASS: four pages, local links, anchors, assets, tables, and publishing boundaries')
+    print('PASS: eight pages, local links, anchors, assets, tables, and publishing boundaries')
 
 if __name__=='__main__':check()
