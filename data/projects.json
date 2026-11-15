@@ -1,0 +1,56 @@
+[
+  {
+    "slug": "scientific-extraction",
+    "category": "Natural language processing",
+    "title": "From scientific sentences to structured knowledge",
+    "intro": "A sentence-to-JSON study of scientific entities and directed relations, comparing prompting, parameter-efficient adaptation, and a split-task Gemma–SciBERT pipeline.",
+    "repository": "structured-information-extraction",
+    "question": "Can separating entity generation from relation classification improve scientific information extraction compared with direct JSON generation?",
+    "methods": [
+      "Converted SciER into sentence-level entity/relation JSON: 5,575 training, 713 development, 854 test, and 580 out-of-domain examples.",
+      "Compared FLAN-T5 baselines, Qwen2.5-1.5B-Instruct, Llama-3.2-1B-Instruct, and Gemma-2-2B-it with zero-shot/few-shot prompting and LoRA adaptation.",
+      "Fine-tuned Qwen and Llama on 3,000 examples each and Gemma on 5,000; model and data budgets therefore differ.",
+      "Used Gemma LoRA to generate entity candidates, then typed directed pairs and SciBERT to classify relations. Evaluated entity spans/types, directed triples, JSON validity, and out-of-domain behavior."
+    ],
+    "columns": ["Recorded system", "Entity micro-F1", "Relation micro-F1"],
+    "rows": [["Qwen LoRA / test", "0.708", "0.372"], ["Llama LoRA / test", "0.722", "0.377"], ["Gemma LoRA / test", "0.733", "0.379"], ["Gemma + SciBERT / test-selected threshold", "0.781", "0.487"], ["Gemma + SciBERT / OOD", "0.674", "0.363"]],
+    "result_note": "These are recorded course-experiment results. The split-task relation threshold was selected on the normal test set, so that row is not an untouched held-out benchmark. The OOD run reused the selected threshold. Qwen’s 854 saved predictions were independently re-scored and matched the recorded metrics; no new GPU inference is claimed.",
+    "limits": ["The exported artifacts lack the trained final SciBERT classifier; an exact full-pipeline replay requires that checkpoint or a new training run.", "Reported comparisons use unequal fine-tuning budgets. They do not establish statistical superiority.", "The task is sentence-level extraction. Autonomous agents, arbitrary PDF parsing, and RAG systems were not implemented; structured scientific knowledge is relevant to those future applications."],
+    "reproduce": "Install the CPU package, run the synthetic rule baseline, evaluate its JSONL outputs, and inspect the saved metric tables. Optional GPU training and inference are documented separately.",
+    "source_note": "Course report, notebook, model configurations, recorded CSVs, and the repository’s code audit. Highest project score awarded by the professor, as reported by the candidate."
+  },
+  {
+    "slug": "forecasting",
+    "category": "Time-series analysis",
+    "title": "Forecasting beyond the next few hours",
+    "intro": "A long-horizon pedestrian-count forecasting study comparing statistical and machine-learning models against daily, weekly, and annual seasonal structure.",
+    "repository": "time-series-forecasting",
+    "question": "How can a forecast preserve seasonal behavior over 1,439 hours without using unavailable future observations?",
+    "methods": ["Audited 41,328 observed hourly street-sensor counts and a 1,439-hour forecast horizon.", "Used season-matched expanding-window folds beginning in January 2018 and 2019, with explicit checks on feature availability at each forecast origin.", "Compared dynamic harmonic regression with ARIMA errors, structural unobserved-components models, and direct machine-learning estimators including histogram gradient boosting.", "Investigated Fourier features, annual lags, 52-week analogues, robust median scaling, shrinkage-calibrated blends, residual diagnostics, and leave-one-fold-out calibration audits."],
+    "columns": ["Model / evaluation", "MAE", "Interpretation"],
+    "rows": [["Seasonal-naive blend", "36.11", "Baseline"], ["Histogram gradient boosting", "25.12", "Two selection folds; freshly reproduced"], ["Calibrated ARIMA", "24.51", "Pooled calibration / scoring folds"], ["Calibrated UCM", "23.62", "Pooled calibration / scoring folds"], ["Stricter ARIMA calibration audit", "24.93", "Leave-one-fold calibration"], ["Stricter UCM calibration audit", "25.73", "Leave-one-fold calibration"]],
+    "result_note": "These are validation scores, not hidden-test performance. The selected statistical blends fitted and scored weights on pooled folds, which can be optimistic. The stricter leave-one-fold audit is a separate experiment. The selected histogram-gradient-boosting model was freshly fitted on both original folds and reproduced mean MAE 25.116469; these remain model-selection folds.",
+    "limits": ["No independent hidden-test score is available.", "The full slow ARIMA/UCM search was not rerun during repository preparation.", "Saved blend weights reproduce the selected structure; they do not demonstrate that every historical output is byte-identical."],
+    "image": "forecast-benchmark.png",
+    "image_caption": "Saved machine-learning validation comparison from the course artifacts.",
+    "reproduce": "Run the data audit, seasonal baseline backtest, and direct machine-learning experiment. The repository also includes the original model grid, selected statistical forecast runner, and fixed calibration weights.",
+    "source_note": "Course report, executed notebook, supporting scripts and result tables. First on the course leaderboard among more than 100 students, as reported by the candidate."
+  },
+  {
+    "slug": "asset-allocation",
+    "category": "Financial Markets Analytics",
+    "title": "How should uncertainty change an allocation?",
+    "intro": "A rolling comparison of constrained portfolio optimization, resampling, and Bayesian views across 20 multi-asset ETFs.",
+    "repository": "financial-markets-analytics",
+    "question": "How do sampling uncertainty and momentum-based investor views change portfolio weights, realized risk, and out-of-sample returns?",
+    "methods": ["Converted FactSet gross total-return levels into monthly returns and estimated each allocation using only the preceding 60 months.", "Used SciPy SLSQP for long-only, fully invested portfolios with a 20% single-ETF cap. Compared equal-weight and 60/40 baskets, Markowitz minimum variance, and maximum Sharpe portfolios.", "Implemented Michaud resampled minimum variance with 100 Gaussian histories per rolling window.", "Built Black–Litterman posterior means and covariance from reverse-optimized priors, absolute/relative trailing-12-month momentum views, confidence-weighted Omega, and shrinkage. Inspected weight-cap and tau sensitivity.", "Evaluated 160 monthly out-of-sample allocations from February 2013 through May 2026, with arithmetic annual return, volatility, zero-risk-free-rate Sharpe, maximum drawdown, and target-weight changes."],
+    "columns": ["Strategy", "Annual return", "Annual volatility", "Sharpe"],
+    "rows": [["Equal weight", "6.12%", "7.77%", "0.79"], ["60/40", "7.63%", "9.29%", "0.82"], ["Markowitz minimum variance", "2.17%", "2.13%", "1.02"], ["Michaud resampled", "2.23%", "2.16%", "1.03"], ["Markowitz maximum Sharpe", "4.71%", "3.18%", "1.48"], ["Black–Litterman", "6.42%", "6.19%", "1.04"]],
+    "result_note": "Arithmetic annualization, not CAGR. Sharpe uses a zero risk-free rate; fees, spreads, slippage, and taxes are excluded. The full CLI experiment reproduced all six original strategy summaries to two decimal places. These are historical gross-return results, not evidence of a future or net-of-cost trading advantage.",
+    "limits": ["The ETF universe was selected retrospectively; survivorship and research selection effects can remain.", "No additional untouched evaluation period or statistical significance claim is supplied.", "FactSet inputs are licensed and excluded from Git. Synthetic demonstration data are clearly separate from the empirical experiment.", "This 2026 FMA study is distinct from the July 2025 S&P 500 / K-means portfolio project in the Business and Marketing lab."],
+    "image": "allocation-wealth.png",
+    "image_caption": "Cumulative gross growth from the locally reproduced six-strategy experiment. See the evaluation assumptions above.",
+    "reproduce": "Run the synthetic CLI without a data account, or supply the licensed FactSet workbook for the original empirical experiment. Inspect exported weights, generated views, performance summaries, and configuration metadata.",
+    "source_note": "Original 129-cell FMA notebook, assignment, supplied workbook, portable methods and validation records. First on the course leaderboard among more than 50 students, as reported by the candidate."
+  }
+]
