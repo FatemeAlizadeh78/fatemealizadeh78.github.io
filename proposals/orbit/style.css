@@ -2,9 +2,11 @@
 @media(max-width:1000px){.site-nav{margin-left:30px;margin-right:30px}.hero{gap:20px}.portrait-ring img{width:205px;height:205px}.orbit-line{width:330px;height:275px}.orbit-line.second{width:270px;height:350px}.floating-label.a{right:0}.nlp-feature{gap:25px;padding:27px}.orbit-about{gap:35px;padding:35px}}
 @media(max-width:700px){.site-nav{margin:15px 20px 0;padding:14px 18px;border-radius:27px}.hero{grid-template-columns:1fr;gap:10px;min-height:0}.hero-art{height:340px;max-width:380px;width:100%;margin:15px auto 0}.portrait-ring img{width:200px;height:200px}.orbit-line{width:315px;height:245px}.orbit-line.second{width:250px;height:320px}.floating-label.a{top:33px;right:0}.floating-label.b{bottom:45px;left:0}.floating-label.c{bottom:5px;right:20px}.hero-art .small-cross{top:10px;left:40px}.orb{left:12px;top:82px}.nlp-feature{grid-template-columns:1fr;border-radius:29px;padding:23px;gap:20px}.nlp-feature .flow{grid-column:auto}.project-grid{grid-template-columns:1fr;gap:22px}.project-grid .project{padding:24px}.project-grid .figure img{height:auto}.orbit-about{grid-template-columns:1fr;border-radius:30px;padding:26px;gap:10px}.honors article{background:#141b2e}.contact-inner{border-radius:34px}}
 
-/* A quiet, cursor-responsive network around the portrait. */
+/* A gray, cursor-responsive network behind the entire page. */
 .hero h1{font-size:clamp(2.8rem,4.9vw,4.6rem);line-height:1.08;letter-spacing:-.045em}
 .hero-art{isolation:isolate;touch-action:pan-y}
-.network{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+body.orbit{isolation:isolate}
+body.orbit > header,body.orbit > main,body.orbit > footer{position:relative;z-index:1}
+.network{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .portrait-ring{pointer-events:none;background:#121a30;box-shadow:0 0 65px #293c6055}
 @media(max-width:700px){.hero h1{font-size:clamp(2.65rem,10vw,3.8rem)}}

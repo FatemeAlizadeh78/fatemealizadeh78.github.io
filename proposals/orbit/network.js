@@ -1,7 +1,6 @@
 /* Decorative graph: fixed dots, with a spring-following cursor connection hub. */
 (() => {
-  const area = document.querySelector('.hero-art');
-  const canvas = area.querySelector('.network');
+  const canvas = document.querySelector('.network');
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
@@ -19,19 +18,19 @@
         const distance = Math.hypot(a.x - b.x, a.y - b.y);
         const nearby = active && Math.hypot(a.x - hub.x, a.y - hub.y) < 135;
         if (distance > (nearby ? 105 : 65)) return;
-        ctx.strokeStyle = nearby ? '#b8f28a66' : '#7188bc28';
+        ctx.strokeStyle = nearby ? '#bcbcbc66' : '#90909028';
         ctx.lineWidth = nearby ? 1 : .65;
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
       });
       if (active && Math.hypot(a.x - hub.x, a.y - hub.y) < 125) {
-        ctx.strokeStyle = '#b8f28a88'; ctx.lineWidth = .9;
+        ctx.strokeStyle = '#c4c4c480'; ctx.lineWidth = .9;
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(hub.x, hub.y); ctx.stroke();
       }
-      ctx.fillStyle = i % 4 === 0 ? '#b8f28a' : '#9ca7ff';
+      ctx.fillStyle = i % 4 === 0 ? '#b0b0b0' : '#858585';
       ctx.beginPath(); ctx.arc(a.x, a.y, i % 4 === 0 ? 3 : 2, 0, Math.PI * 2); ctx.fill();
     });
     if (active) {
-      ctx.fillStyle = '#d7ffb6'; ctx.beginPath(); ctx.arc(hub.x, hub.y, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#d0d0d0'; ctx.beginPath(); ctx.arc(hub.x, hub.y, 4, 0, Math.PI * 2); ctx.fill();
     }
   }
   function stop() { cancelAnimationFrame(frame); frame = 0; previous = 0; }
@@ -52,31 +51,31 @@
     else previous = 0;
   }
   function resize() {
-    stop(); width = area.clientWidth; height = area.clientHeight;
+    stop(); width = innerWidth; height = innerHeight;
     const scale = Math.min(devicePixelRatio || 1, 2);
     canvas.width = width * scale; canvas.height = height * scale;
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
     // Deterministic placement avoids flicker when the viewport is resized.
     let seed = 8147;
     const random = () => { seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return (seed >>> 0) / 4294967296; };
-    nodes = Array.from({ length: 64 }, () => ({
+    nodes = Array.from({ length: Math.min(150, Math.max(40, Math.round(width * height / 12000))) }, () => ({
       x: (.06 + random() * .88) * width,
       y: (.05 + random() * .9) * height
     }));
     target.active = false; draw();
   }
-  area.addEventListener('pointermove', event => {
+  document.addEventListener('pointermove', event => {
     if (!enabled()) return;
-    const rect = area.getBoundingClientRect();
-    target.x = event.clientX - rect.left; target.y = event.clientY - rect.top;
+    target.x = event.clientX; target.y = event.clientY;
     if (!target.active) { hub.x = target.x; hub.y = target.y; hub.vx = hub.vy = 0; }
     target.active = true;
     if (!frame) frame = requestAnimationFrame(tick);
   });
-  area.addEventListener('pointerleave', () => { target.active = false; stop(); draw(); });
+  document.documentElement.addEventListener('pointerleave', () => { target.active = false; stop(); draw(); });
   function sync() { target.active = false; stop(); draw(); }
   new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['data-motion'] });
-  new ResizeObserver(resize).observe(area);
+  window.addEventListener('resize', resize);
+  resize();
   reduce.addEventListener('change', sync); fine.addEventListener('change', sync);
   document.addEventListener('visibilitychange', sync);
 })();
