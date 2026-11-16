@@ -18,16 +18,16 @@
         const distance = Math.hypot(a.x - b.x, a.y - b.y);
         const nearby = active && Math.hypot(a.x - hub.x, a.y - hub.y) < 135;
         if (distance > (nearby ? 105 : 65)) return;
-        ctx.strokeStyle = nearby ? '#bcbcbc66' : '#90909028';
-        ctx.lineWidth = nearby ? 1 : .65;
+        ctx.strokeStyle = nearby ? '#c6c6c68c' : '#a0a0a04d';
+        ctx.lineWidth = nearby ? 1.25 : .9;
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
       });
       if (active && Math.hypot(a.x - hub.x, a.y - hub.y) < 125) {
-        ctx.strokeStyle = '#c4c4c480'; ctx.lineWidth = .9;
+        ctx.strokeStyle = '#cececeaa'; ctx.lineWidth = 1.15;
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(hub.x, hub.y); ctx.stroke();
       }
-      ctx.fillStyle = i % 4 === 0 ? '#b0b0b0' : '#858585';
-      ctx.beginPath(); ctx.arc(a.x, a.y, i % 4 === 0 ? 3 : 2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = i % 4 === 0 ? '#cccccc' : '#aaaaaa';
+      ctx.beginPath(); ctx.arc(a.x, a.y, i % 4 === 0 ? 3.6 : 2.6, 0, Math.PI * 2); ctx.fill();
     });
     if (active) {
       ctx.fillStyle = '#d0d0d0'; ctx.beginPath(); ctx.arc(hub.x, hub.y, 4, 0, Math.PI * 2); ctx.fill();
@@ -37,7 +37,8 @@
   function tick(time) {
     frame = 0;
     if (!enabled() || !target.active) { previous = 0; draw(); return; }
-    const dt = Math.min((time - (previous || time - 16)) / 1000, .025);
+    // Run the same spring at 75% speed for gentler connection tracking.
+    const dt = Math.min((time - (previous || time - 16)) / 1000, .025) * .75;
     previous = time;
     // A damped spring: mass 1, stiffness 100, damping 10.
     for (const axis of ['x', 'y']) {
